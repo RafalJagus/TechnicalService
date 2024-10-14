@@ -133,11 +133,62 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+        } 
+		
+
+        .error {
+            color: red;
+            text-align: center;
         }
+		        .map-container {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            background-color: #ddd;
+            border: 1px solid #ccc;
+        }
+
+        .area {
+            position: absolute;
+            background-color: rgba(0, 150, 255, 0.5);
+            border: 1px solid #000;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+		.area h1{
+		font-size: 0.5rem; /* Skalowanie wielkości od 1rem do 3rem zależnie od szerokości ekranu */
+		text-align: center; /* Wyśrodkowanie tekstu poziomo */
+		margin: 0; /* Usunięcie domyślnych marginesów */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%; /* Sprawia, że nagłówek zajmuje całą wysokość kafelka */
+		overflow: hidden;
+		}
+
+        .area:hover {
+            background-color: rgba(0, 150, 255, 0.8);
+        }
+
+        /* Wymiary i pozycje obszarów */
+        .B4B5 { left: 88px; top: 35px; width: 159px; height: 168px; clip-path: polygon(0% 0%, 100% 0%, 100% 6%, 100% 100%, 0% 100%); }
+        .B { left: 169px; top: 32px; width: 76px; height: 10px; }
+        .B6 { left: 249px; top: 33px; width: 154px; height: 91px; }
+		.E { left: 363px; top: 192px; width: 54px; height: 23px; clip-path: polygon(42px 0px, 54px 1px, 54px 23px, 0px 23px, 0px 12px, 39px 12px); }
+        .B7 { left: 249px; top: 125px; width: 154px; height: 78px; }
+        .B1 { left: 246px; top: 205px; width: 54px; height: 238px; }
+        .B3 { left: 87px; top: 205px; width: 157px; height: 76px; }
+        .B2 { left: 89px; top: 284px; width: 154px; height: 156px; }
+        .A { left: 68px; top: 80px; width: 18px; height: 189px; }
+        .B8 { left: 405px; top: 31px; width: 99px; height: 159px; }
+        .B9 { left: 506px; top: 121px; width: 188px; height: 59px; }
+        .C { left: 505px; top: 30px; width: 11px; height: 67px; }
+        .H { left: 285px; top: 464px; width: 33px; height: 20px; }
+        .D { left: 696px; top: 169px; width: 6px; height: 14px; }
     </style>
 </head>
 <body>
-    <nav>
+    <nav class="hidden" id="menu">
         <div class="menu-toggle" onclick="toggleMenu()">
             <span></span>
             <span></span>
@@ -147,11 +198,22 @@
             <a href="#" onclick="pokazSekcje('strona-glowna')">Strona Główna</a>
             <a href="#" onclick="pokazSekcje('dodaj-zgloszenie')">Dodaj Zgłoszenie</a>
             <a href="#" onclick="pokazSekcje('mapa')">Mapa</a>
+            <a href="#" onclick="wyloguj()">Wyloguj</a>
         </div>
     </nav>
 
     <div class="content">
-        <section id="strona-glowna">
+        <section id="logowanie">
+            <h2>Zaloguj się</h2>
+            <form id="formularzLogowania">
+                <input type="text" id="login" placeholder="Login" required>
+                <input type="password" id="haslo" placeholder="Hasło" required>
+                <button type="submit">Zaloguj</button>
+            </form>
+            <div class="error" id="bladLogowania"></div>
+        </section>
+
+        <section id="strona-glowna" class="hidden">
             <h2>Lista Zgłoszeń</h2>
             <ul id="listaZgloszen"></ul>
         </section>
@@ -166,22 +228,60 @@
         </section>
 
         <section id="mapa" class="hidden">
-            <h2>Mapa</h2>
+            <h1>Mapa</h1>
+			
+			<h2>Neon</h2>
+			
             <div class="map-container">
-                <!-- Możesz tutaj umieścić iframe z Google Maps -->
-                <p>Tutaj będzie mapa lub inna funkcjonalność związana z lokalizacją.</p>
+              
+				
+        <div class="area B4B5" title="B4B5"><h1>B4B5</h1></div>
+        <div class="area B" title="B"><h1>B</h1></div>
+        <div class="area B6" title="B6"><h1>B6</h1></div>
+		<div class="area E" title="E"><h1>E</h1></div>
+        <div class="area B7" title="B7"><h1>B7</h1></div>
+        <div class="area B1" title="B1"><h1>B1</h1></div>
+        <div class="area B3" title="B3"><h1>B3</h1></div>
+        <div class="area B2" title="B2"><h1>B2</h1></div>
+        <div class="area A" title="A"><h1>A</h1></div>
+        <div class="area B8" title="B8"><h1>B8</h1></div>
+        <div class="area B9" title="B9"><h1>B9</h1></div>
+        <div class="area C" title="C"><h1>C</h1></div>
+        <div class="area H" title="H"><h1>H</h1></div>
+        <div class="area D" title="D"><h1>D</h1></div>
+    
+
             </div>
         </section>
     </div>
 
     <script>
+        const formularzLogowania = document.getElementById('formularzLogowania');
         const formularzZgloszenia = document.getElementById('formularzZgloszenia');
         const listaZgloszen = document.getElementById('listaZgloszen');
+        const bladLogowania = document.getElementById('bladLogowania');
 
         const zgloszenia = [
             { opis: 'Problem z drukarką', osobaOdpowiedzialna: 'Jan Kowalski', status: 'W trakcie' },
             { opis: 'Błąd sieci', osobaOdpowiedzialna: 'Anna Nowak', status: 'Nowe' }
         ];
+
+        const poprawnyLogin = 'test';
+        const poprawneHaslo = '123';
+
+        formularzLogowania.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const login = document.getElementById('login').value;
+            const haslo = document.getElementById('haslo').value;
+
+            if (login === poprawnyLogin && haslo === poprawneHaslo) {
+                bladLogowania.textContent = '';
+                pokazMenu();
+                pokazSekcje('strona-glowna');
+            } else {
+                bladLogowania.textContent = 'Nieprawidłowy login lub hasło';
+            }
+        });
 
         function wyswietlZgloszenia() {
             listaZgloszen.innerHTML = '';
@@ -211,7 +311,7 @@
             zgloszenia.push(noweZgloszenie);
             wyswietlZgloszenia();
             formularzZgloszenia.reset();
-            pokazSekcje('strona-glowna'); // Po dodaniu wraca do strony głównej
+            pokazSekcje('strona-glowna'); 
         });
 
         function pokazSekcje(sekcjaId) {
@@ -220,12 +320,20 @@
             document.getElementById(sekcjaId).classList.remove('hidden');
         }
 
+        function pokazMenu() {
+            document.getElementById('menu').classList.remove('hidden');
+        }
+
         function toggleMenu() {
             document.querySelector('nav').classList.toggle('active');
         }
 
+        function wyloguj() {
+            pokazSekcje('logowanie');
+            document.getElementById('menu').classList.add('hidden');
+        }
+
         wyswietlZgloszenia();
-        pokazSekcje('strona-glowna'); // Domyślnie pokazuje stronę główną
     </script>
 </body>
 </html>
