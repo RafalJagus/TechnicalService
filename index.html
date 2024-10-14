@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Zgłoszeń Działu Technicznego</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        nav {
+            background-color: #007bff;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        nav .menu-toggle {
+            display: none;
+            background-color: #0056b3;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        nav .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            margin: 5px 0;
+        }
+
+        nav .menu-items {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            nav .menu-items {
+                display: none;
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+                background-color: #007bff;
+            }
+
+            nav.active .menu-items {
+                display: flex;
+            }
+
+            nav .menu-toggle {
+                display: block;
+            }
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .zgloszenie-opis {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .zgloszenie-status {
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .map-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="menu-items">
+            <a href="#" onclick="pokazSekcje('strona-glowna')">Strona Główna</a>
+            <a href="#" onclick="pokazSekcje('dodaj-zgloszenie')">Dodaj Zgłoszenie</a>
+            <a href="#" onclick="pokazSekcje('mapa')">Mapa</a>
+        </div>
+    </nav>
+
+    <div class="content">
+        <section id="strona-glowna">
+            <h2>Lista Zgłoszeń</h2>
+            <ul id="listaZgloszen"></ul>
+        </section>
+
+        <section id="dodaj-zgloszenie" class="hidden">
+            <h2>Dodaj Zgłoszenie</h2>
+            <form id="formularzZgloszenia">
+                <input type="text" id="opis" placeholder="Opis zgłoszenia" required>
+                <input type="text" id="osobaOdpowiedzialna" placeholder="Osoba odpowiedzialna" required>
+                <button type="submit">Dodaj zgłoszenie</button>
+            </form>
+        </section>
+
+        <section id="mapa" class="hidden">
+            <h2>Mapa</h2>
+            <div class="map-container">
+                <!-- Możesz tutaj umieścić iframe z Google Maps -->
+                <p>Tutaj będzie mapa lub inna funkcjonalność związana z lokalizacją.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const formularzZgloszenia = document.getElementById('formularzZgloszenia');
+        const listaZgloszen = document.getElementById('listaZgloszen');
+
+        const zgloszenia = [
+            { opis: 'Problem z drukarką', osobaOdpowiedzialna: 'Jan Kowalski', status: 'W trakcie' },
+            { opis: 'Błąd sieci', osobaOdpowiedzialna: 'Anna Nowak', status: 'Nowe' }
+        ];
+
+        function wyswietlZgloszenia() {
+            listaZgloszen.innerHTML = '';
+            zgloszenia.forEach(zgloszenie => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="zgloszenie-opis">${zgloszenie.opis}</div>
+                    <div class="zgloszenie-status">
+                        Status: ${zgloszenie.status} | Osoba odpowiedzialna: ${zgloszenie.osobaOdpowiedzialna}
+                    </div>
+                `;
+                listaZgloszen.appendChild(li);
+            });
+        }
+
+        formularzZgloszenia.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const opis = document.getElementById('opis').value;
+            const osobaOdpowiedzialna = document.getElementById('osobaOdpowiedzialna').value;
+
+            const noweZgloszenie = {
+                opis,
+                osobaOdpowiedzialna,
+                status: 'Nowe'
+            };
+
+            zgloszenia.push(noweZgloszenie);
+            wyswietlZgloszenia();
+            formularzZgloszenia.reset();
+            pokazSekcje('strona-glowna'); // Po dodaniu wraca do strony głównej
+        });
+
+        function pokazSekcje(sekcjaId) {
+            const sekcje = document.querySelectorAll('section');
+            sekcje.forEach(sekcja => sekcja.classList.add('hidden'));
+            document.getElementById(sekcjaId).classList.remove('hidden');
+        }
+
+        function toggleMenu() {
+            document.querySelector('nav').classList.toggle('active');
+        }
+
+        wyswietlZgloszenia();
+        pokazSekcje('strona-glowna'); // Domyślnie pokazuje stronę główną
+    </script>
+</body>
+</html>
